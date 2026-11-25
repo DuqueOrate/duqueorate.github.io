@@ -3,8 +3,14 @@ const CONFIG = {
   // Número con código de país, sin + ni espacios. Ej Argentina móvil: 5491123456789
   whatsapp: "5491178142528",
   claveCarrito: "duque-orate-carrito", // nombre con el que se guarda el pedido en el navegador
-  // Cartel de arriba: [frase del proyecto, eslogan]. En celulares solo se ve el eslogan. Vacío ([]) = sin cartel.
-  promo: ["Tecnología elegida con criterio y atención cercana", "El nombre es medio loco. La forma de trabajar, no."],
+  claveModo: "duque-orate-modo", // recuerda si la persona eligió "Casa / Estudio" o "Empresas"
+  // Barra de confianza de arriba: sumá, sacá o cambiá frases. En celulares solo se ve la primera. Vacío ([]) = sin barra.
+  promo: ["Productos nuevos, en caja original", "Retiro sin costo en San Miguel", "Atención por WhatsApp todos los días"],
+  // Mensajes que se cargan solos al tocar WhatsApp, según el modo elegido arriba
+  mensajesWhatsapp: {
+    casa: "¡Hola! Me interesa un producto de Duque Orate y tengo algunas consultas. ¿Me pasan más información?",
+    empresas: "¡Hola! Quiero equipar puestos de trabajo de mi empresa. ¿Me pasan una cotización?",
+  },
   // Frases que se alternan en la pestaña del navegador cuando la persona se va a otra pestaña.
   // Sumá, sacá o cambiá las que quieras. Lista vacía ([]) = sin efecto.
   titulosPestana: [
@@ -35,6 +41,8 @@ Object.keys(NOMBRES_FILTRO).forEach((k) => {
 const CATALOGO = [...PRODUCTS, ...KITS]; // para buscar un ítem por su id
 const PRODUCTOS_VISIBLES = 8; // cuántas tarjetas se muestran antes de necesitar "ver más"
 const KITS_VISIBLES = 4; // ídem para kits
+const BENTO_PRODUCTOS = 4; // productos en la portada: primero los marcados "Destacado"/"En portada", después se completa con el resto
+let modo = "casa"; // "casa" o "empresas", lo cambia el selector del header
 let filtroActual = "todos";
 let productosExpandido = false;
 let kitsExpandido = false;
@@ -43,6 +51,8 @@ let carrito = {}; // formato: { "id-del-producto": cantidad }. Se carga en DOMCo
 const $ = (sel) => document.querySelector(sel);
 const waLink = (texto) => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`;
 const formatoPrecio = (p) => (p == null ? "Consultar precio" : `$${p.toLocaleString("es-AR")}`);
+// Precio que se muestra en tarjetas: en modo Empresas aclara que es por unidad
+const precioVisible = (item) => formatoPrecio(item.precio) + (modo === "empresas" && item.precio != null ? " c/u" : "");
 const buscar = (id) => CATALOGO.find((x) => x.id === id);
 const zonaActual = () => ZONAS.find((z) => z.id === $("#cart-zona").value) || ZONAS[0];
 const textoCosto = (z) => (z.costo == null ? "A coordinar" : z.costo === 0 ? "Sin costo" : formatoPrecio(z.costo));
@@ -73,6 +83,11 @@ function cambiarCantidad(id, delta) {
   else carrito[id] = nueva;
   guardarCarrito();
   renderCarrito();
+  if (delta > 0) {
+    const b = $("#cart-btn");
+    b.classList.add("bump");
+    setTimeout(() => b.classList.remove("bump"), 250);
+  }
 }
 
 function totalUnidades() {
@@ -164,21 +179,35 @@ function crearCard(item) {
     card.append(ul);
   }
 
-  const pr = document.createElement("p");
-  pr.className = "price";
-  pr.textContent = formatoPrecio(item.precio);
+  card.append(crearPie(item, "card-foot"));
+  return card;
+}
+
+// Botón redondo "+" que suma una unidad al carrito y muestra un ✓ un instante
+function crearBotonMas(item) {
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = "btn";
-  btn.textContent = "Agregar al carrito";
+  btn.className = "add-btn";
+  btn.textContent = "+";
+  btn.setAttribute("aria-label", `Agregar ${item.nombre} al carrito`);
   btn.addEventListener("click", () => {
     cambiarCantidad(item.id, 1);
-    btn.textContent = "Agregado";
-    setTimeout(() => (btn.textContent = "Agregar al carrito"), 1200);
+    btn.textContent = "✓";
+    btn.classList.add("ok");
+    setTimeout(() => { btn.textContent = "+"; btn.classList.remove("ok"); }, 1000);
   });
+  return btn;
+}
 
-  card.append(pr, btn);
-  return card;
+// Fila de abajo de cada tarjeta: precio a la izquierda, "+" a la derecha
+function crearPie(item, clase) {
+  const pie = document.createElement("div");
+  pie.className = clase;
+  const pr = document.createElement("p");
+  pr.className = "price";
+  pr.textContent = precioVisible(item);
+  pie.append(pr, crearBotonMas(item));
+  return pie;
 }
 
 function renderProductos() {
@@ -432,8 +461,7 @@ function iniciarWhatsappFloat() {
   const btn = $("#wa-float");
   if (!btn) return;
   btn.addEventListener("click", () => {
-    const texto = "¡Hola! Me interesa un producto de Duque Orate y tengo algunas consultas. ¿Me pasan más información?";
-    window.open(waLink(texto), "_blank", "noopener");
+    window.open(waLink(CONFIG.mensajesWhatsapp[modo]), "_blank", "noopener");
   });
 }
 
@@ -461,65 +489,126 @@ function iniciarTituloPestana() {
   });
 }
 
-// ---------- Destacado de la portada: uno al azar en cada visita ----------
-function iniciarDestacado() {
-  const fig = $("#hero-media");
-  if (!fig) return;
-  const todos = [...PRODUCTS, ...KITS].filter((x) => fotosDe(x).length);
-  let opciones = todos.filter((x) => x.portada);
-  if (!opciones.length) opciones = todos.filter((x) => x.destacado);
-  if (!opciones.length) return;
-  const item = opciones[Math.floor(Math.random() * opciones.length)];
+// ---------- Portada bento: productos destacados en los casilleros ----------
+function elegirDestacados() {
+  const conFoto = PRODUCTS.filter((x) => fotosDe(x).length);
+  const marcados = conFoto.filter((x) => x.destacado || x.portada).sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0));
+  const resto = conFoto.filter((x) => !marcados.includes(x));
+  return [...marcados, ...resto].slice(0, BENTO_PRODUCTOS);
+}
 
-  const cap = document.createElement("figcaption");
-  const etiqueta = document.createElement("span");
-  etiqueta.className = "mono";
-  etiqueta.textContent = "Destacado";
-  const nombre = document.createElement("span");
-  nombre.className = "hero-nombre";
-  nombre.textContent = item.nombre;
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "btn btn-small";
-  btn.textContent = "Agregar al carrito";
-  btn.addEventListener("click", () => {
-    cambiarCantidad(item.id, 1);
-    btn.textContent = "Agregado";
-    setTimeout(() => (btn.textContent = "Agregar al carrito"), 1200);
+function renderBento() {
+  const elegidos = elegirDestacados();
+  document.querySelectorAll(".bento [data-slot]").forEach((tile) => {
+    const item = elegidos[Number(tile.dataset.slot)];
+    tile.replaceChildren();
+    tile.hidden = !item;
+    if (!item) return;
+    const titulo = document.createElement("h3");
+    titulo.textContent = item.nombre;
+    if (tile.classList.contains("tile-wide")) {
+      const info = document.createElement("div");
+      info.className = "tile-info";
+      const etiqueta = document.createElement("span");
+      etiqueta.className = "mono";
+      etiqueta.textContent = item.destacado ? "Destacado" : "Recomendado";
+      info.append(etiqueta, titulo, crearPie(item, "tile-foot"));
+      tile.append(crearMedia(item), info);
+    } else {
+      tile.append(crearMedia(item), titulo, crearPie(item, "tile-foot"));
+    }
   });
-  cap.append(etiqueta, nombre, btn);
-  fig.replaceChildren(crearMedia(item), cap);
-  fig.hidden = false;
+
+  // Casillero de kits: los 2 primeros, cada uno con su "+"
+  const lista = $("#tile-kits-list");
+  lista.replaceChildren();
+  KITS.slice(0, 2).forEach((k) => {
+    const li = document.createElement("li");
+    const info = document.createElement("div");
+    info.className = "kit-info";
+    const nombre = document.createElement("strong");
+    nombre.textContent = k.nombre;
+    const detalle = document.createElement("small");
+    detalle.textContent = (k.componentes || []).map((c) => (buscar(c.id) || {}).nombre).filter(Boolean).join(" + ");
+    const pr = document.createElement("span");
+    pr.className = "price";
+    pr.textContent = precioVisible(k);
+    info.append(nombre, detalle, pr);
+    li.append(info, crearBotonMas(k));
+    lista.append(li);
+  });
+  $("#tile-kits").hidden = !KITS.length;
+}
+
+// ---------- Selector "Casa / Estudio" – "Empresas" ----------
+function aplicarModo(nuevo, guardar = true) {
+  modo = nuevo === "empresas" ? "empresas" : "casa";
+  document.body.dataset.modo = modo;
+  document.querySelectorAll(".modo-btn").forEach((b) => b.setAttribute("aria-pressed", b.dataset.modo === modo));
+  $("#tile-wa").href = waLink(CONFIG.mensajesWhatsapp[modo]);
+  // En el formulario de contacto, deja preseleccionado el uso que corresponde
+  const uso = $("#uso");
+  if (uso) uso.selectedIndex = modo === "empresas" ? 2 : 0;
+  if (guardar) {
+    try { localStorage.setItem(CONFIG.claveModo, modo); } catch (err) { /* sin almacenamiento: no pasa nada */ }
+  }
+  renderBento();
+  renderProductos();
+  renderKits();
+}
+
+function iniciarModo() {
+  document.querySelectorAll(".modo-btn").forEach((b) => b.addEventListener("click", () => aplicarModo(b.dataset.modo)));
+  let guardado = "casa";
+  try { guardado = localStorage.getItem(CONFIG.claveModo) || "casa"; } catch (err) { /* idem */ }
+  aplicarModo(guardado, false);
+}
+
+// ---------- Cotizador para empresas ----------
+function iniciarCotizador() {
+  const form = $("#cotizador-form");
+  if (!form) return;
+  const opciones = form.querySelectorAll(".opcion");
+  opciones.forEach((b) => b.addEventListener("click", () => opciones.forEach((o) => o.setAttribute("aria-pressed", o === b))));
+  form.querySelectorAll(".chip").forEach((c) =>
+    c.addEventListener("click", () => c.setAttribute("aria-pressed", c.getAttribute("aria-pressed") !== "true"))
+  );
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const puestos = (form.querySelector('.opcion[aria-pressed="true"]') || {}).dataset?.puestos || "varios puestos";
+    const necesidades = [...form.querySelectorAll('.chip[aria-pressed="true"]')].map((c) => c.dataset.necesidad);
+    const error = $("#cot-error");
+    if (!necesidades.length) {
+      error.textContent = "Elegí al menos una opción de lo que necesitás.";
+      return;
+    }
+    error.textContent = "";
+    const empresa = $("#cot-empresa").value.trim();
+    const texto = `Hola${empresa ? `, les escribo de ${empresa}` : ""}. Quiero cotizar ${puestos} con: ${necesidades.join(", ")}.`;
+    window.open(waLink(texto), "_blank", "noopener");
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   carrito = cargarCarrito();
   const promo = $("#promo");
-  const [frase, eslogan] = CONFIG.promo;
-  if (frase) {
+  CONFIG.promo.forEach((frase) => {
     const s = document.createElement("span");
-    s.className = "promo-frase";
+    s.className = "promo-item";
     s.textContent = frase;
     promo.append(s);
-  }
-  if (eslogan) {
-    const s = document.createElement("span");
-    s.className = "promo-eslogan";
-    s.textContent = eslogan;
-    promo.append(s);
-  }
+  });
   promo.hidden = !CONFIG.promo.length;
   $("#year").textContent = new Date().getFullYear();
   renderFiltros();
-  renderProductos();
-  renderKits();
   renderZonas();
+  iniciarModo(); // dibuja portada, productos y kits según el modo guardado
   iniciarMenu();
   iniciarFormulario();
   iniciarCarrito();
   iniciarWhatsappFloat();
   iniciarTituloPestana();
-  iniciarDestacado();
+  iniciarCotizador();
   iniciarCatsHero();
   iniciarVerMas();
 });
