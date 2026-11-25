@@ -301,3 +301,20 @@ body[data-modo="empresas"] [data-solo="casa"]{display:none !important}
 .form-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .form input,.form select,.form textarea,.cotizador input{width:100%;min-width:0}
 @media (max-width:860px){.form-row{grid-template-columns:minmax(0,1fr)}}
+/* Carrito: en compu dice "Carrito (n)"; en celular, ícono + número para que entre en la fila de la marca */
+.cart-btn{display:inline-flex;align-items:center;gap:6px}
+.cart-icon{width:20px;height:20px;display:none;flex:none}
+@media (max-width:860px){
+  /* Header del celular: fila 1 = marca · menú · carrito; fila 2 = selector */
+  .site-header{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px}
+  .brand{grid-column:1}
+  .menu-btn{margin-left:0}
+  .modo{grid-column:1 / -1}
+}
+@media (max-width:480px){
+  .cart-label{display:none}
+  .cart-icon{display:block}
+  .cart-btn{padding:7px 12px}
+  .cart-num{font-variant-numeric:tabular-nums}
+  .brand .wordmark{font-size:1.08rem}
+}
