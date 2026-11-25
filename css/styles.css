@@ -290,3 +290,14 @@ body[data-modo="empresas"] [data-solo="casa"]{display:none !important}
 /* Fotos del bento: siempre enteras dentro del casillero */
 .tile-prod .media{display:flex;align-items:center;justify-content:center;padding:6px}
 .tile-prod .media>img{width:100%;height:100%;object-fit:contain}
+/* El menú completo entra desde ~1080px; por debajo se pliega en el botón "Menú" */
+@media (max-width:1080px){
+  .site-header{flex-wrap:wrap;gap:10px 16px}
+  .menu-btn{display:block;margin-left:auto}
+  .nav{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:flex-start;gap:16px;padding:14px var(--lateral) 20px;background:var(--blanco);border-bottom:1px solid var(--linea);margin:0}
+  .nav.open{display:flex}
+}
+/* Los campos del formulario se achican con la pantalla (evita desborde en tablets) */
+.form-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.form input,.form select,.form textarea,.cotizador input{width:100%;min-width:0}
+@media (max-width:860px){.form-row{grid-template-columns:minmax(0,1fr)}}
