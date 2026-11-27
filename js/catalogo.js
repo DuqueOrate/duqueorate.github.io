@@ -88,7 +88,7 @@ const PRODUCTS = [
       "img/productos/LOGITECH_M240_1.webp",
       "img/productos/LOGITECH_M240_2.webp"
     ],
-    "precio": 30490,
+    "precio": 35990,
     "destacado": false,
     "portada": false,
     "categorias": [
@@ -133,7 +133,7 @@ const PRODUCTS = [
     "fotos": [
       "img/productos/RAPTOR_VISION_4K_1.webp"
     ],
-    "precio": 42490,
+    "precio": 40000,
     "destacado": false,
     "portada": false,
     "categorias": [
@@ -162,11 +162,43 @@ const PRODUCTS = [
       "img/productos/HP_M111W_1.webp",
       "img/productos/HP_M111W_2.webp"
     ],
-    "precio": 264990,
+    "precio": 240000,
     "destacado": false,
     "portada": false,
     "categorias": [
       "impresoras"
+    ]
+  },
+  {
+    "id": "DO-PEN-002",
+    "nombre": "Pendrive SanDisk Ultra Shift 64 GB",
+    "detalle": "USB 3.2 de alta velocidad, diseño giratorio que protege el conector. 64 GB.",
+    "fotos": [
+      "img/productos/SANDISK_ULTRASHIFT_64GB_1.webp",
+      "img/productos/SANDISK_ULTRASHIFT_64GB_2.webp",
+      "img/productos/SANDISK_ULTRASHIFT_64GB_3.webp"
+    ],
+    "precio": 25990,
+    "destacado": false,
+    "portada": false,
+    "categorias": [
+      "pendrive"
+    ]
+  },
+  {
+    "id": "DO-PEN-003",
+    "nombre": "Pendrive SanDisk Ultra Shift 32 GB",
+    "detalle": "USB 3.2 de alta velocidad, diseño giratorio que protege el conector. 32 GB.",
+    "fotos": [
+      "img/productos/SANDISK_ULTRASHIFT_32GB_1.webp",
+      "img/productos/SANDISK_ULTRASHIFT_32GB_2.webp",
+      "img/productos/SANDISK_ULTRASHIFT_32GB_3.webp"
+    ],
+    "precio": 22990,
+    "destacado": false,
+    "portada": false,
+    "categorias": [
+      "pendrive"
     ]
   }
 ];
