@@ -18,6 +18,22 @@ const PRODUCTS = [
     ]
   },
   {
+    "id": "DO-PAR-001",
+    "nombre": "Parlante JBL GO 5 Sumergible",
+    "detalle": "",
+    "fotos": [
+      "img/productos/PARLANTE_JBL_GO5_1.webp",
+      "img/productos/PARLANTE_JBL_GO5_2.webp",
+      "img/productos/PARLANTE_JBL_GO5_3.webp"
+    ],
+    "precio": 115000,
+    "destacado": true,
+    "portada": true,
+    "categorias": [
+      "parlante"
+    ]
+  },
+  {
     "id": "DO-IMP-001",
     "nombre": "Impresora láser Brother HL-1200",
     "detalle": "Láser monocromática y compacta, con bajo costo por hoja. Para oficina y estudio.",
@@ -25,7 +41,7 @@ const PRODUCTS = [
       "img/productos/IMPRESORA_BROTHER_HL1200_1.webp",
       "img/productos/IMPRESORA_BROTHER_HL1200_2.webp"
     ],
-    "precio": null,
+    "precio": 210000,
     "destacado": false,
     "portada": true,
     "categorias": [
