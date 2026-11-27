@@ -178,7 +178,7 @@ const PRODUCTS = [
       "img/productos/SANDISK_ULTRASHIFT_64GB_2.webp",
       "img/productos/SANDISK_ULTRASHIFT_64GB_3.webp"
     ],
-    "precio": 25990,
+    "precio": 29990,
     "destacado": false,
     "portada": false,
     "categorias": [
@@ -194,7 +194,7 @@ const PRODUCTS = [
       "img/productos/SANDISK_ULTRASHIFT_32GB_2.webp",
       "img/productos/SANDISK_ULTRASHIFT_32GB_3.webp"
     ],
-    "precio": 22990,
+    "precio": 24990,
     "destacado": false,
     "portada": false,
     "categorias": [
