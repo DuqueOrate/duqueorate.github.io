@@ -20,13 +20,13 @@ const PRODUCTS = [
   {
     "id": "DO-PAR-001",
     "nombre": "Parlante JBL GO 5 Sumergible",
-    "detalle": "Portátil, sumergible (IP67) y con sonido JBL Pro. Para llevar a todos lados.",
+    "detalle": "Portátil y sumergible (IP68), con sonido JBL Pro. Disponible en negro, rojo y azul.",
     "fotos": [
       "img/productos/PARLANTE_JBL_GO5_1.webp",
       "img/productos/PARLANTE_JBL_GO5_2.webp",
       "img/productos/PARLANTE_JBL_GO5_3.webp"
     ],
-    "precio": 115000,
+    "precio": 110000,
     "destacado": true,
     "portada": true,
     "categorias": [
