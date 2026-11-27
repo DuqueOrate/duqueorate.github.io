@@ -66,21 +66,6 @@ const PRODUCTS = [
     ]
   },
   {
-    "id": "DO-PEN-001",
-    "nombre": "Pendrive Hiksemi 32 GB",
-    "detalle": "Diseño giratorio con tapa metálica que protege el conector.",
-    "fotos": [
-      "img/productos/PENDRIVE_HIKSEMI_32GB_1.webp",
-      "img/productos/PENDRIVE_HIKSEMI_32GB_2.webp"
-    ],
-    "precio": null,
-    "destacado": false,
-    "portada": false,
-    "categorias": [
-      "pendrive"
-    ]
-  },
-  {
     "id": "DO-MOU-002",
     "nombre": "Mouse Bluetooth Logitech M240",
     "detalle": "Bluetooth, silencioso y liviano. Ideal para notebook, tablet y oficina.",
@@ -230,10 +215,6 @@ const KITS = [
       {
         "id": "DO-COM-001",
         "cantidad": 1
-      },
-      {
-        "id": "DO-PEN-001",
-        "cantidad": 1
       }
     ]
   },
@@ -252,25 +233,6 @@ const KITS = [
       },
       {
         "id": "DO-PAD-001",
-        "cantidad": 1
-      }
-    ]
-  },
-  {
-    "id": "DO-KIT-002",
-    "nombre": "Kit Estudiante",
-    "detalle": "Mouse inalámbrico Logitech M170 + pendrive Hiksemi 32 GB.",
-    "fotos": [],
-    "precio": null,
-    "destacado": false,
-    "portada": false,
-    "componentes": [
-      {
-        "id": "DO-MOU-001",
-        "cantidad": 1
-      },
-      {
-        "id": "DO-PEN-001",
         "cantidad": 1
       }
     ]
