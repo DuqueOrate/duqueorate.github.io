@@ -206,14 +206,18 @@ const KITS = [
   {
     "id": "DO-KIT-001",
     "nombre": "Kit Oficina",
-    "detalle": "Combo teclado y mouse inalámbrico Logitech + pendrive Hiksemi 32 GB.",
+    "detalle": "Combo teclado y mouse inalámbrico Logitech MK235 + webcam Raptor Vision 4K. Listo para videollamadas.",
     "fotos": [],
-    "precio": null,
+    "precio": 74990,
     "destacado": true,
     "portada": true,
     "componentes": [
       {
         "id": "DO-COM-001",
+        "cantidad": 1
+      },
+      {
+        "id": "DO-WEB-001",
         "cantidad": 1
       }
     ]
