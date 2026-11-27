@@ -200,6 +200,20 @@ const PRODUCTS = [
     "categorias": [
       "pendrive"
     ]
+  },
+  {
+    "id": "DO-PAD-001",
+    "nombre": "Mouse pad XL Raptor Ultra Glide 70x30",
+    "detalle": "Pad grande de 70x30 cm para teclado y mouse. Antideslizante e impermeable.",
+    "fotos": [
+      "img/productos/PAD_RAPTOR_ULTRAGLIDE_L_1.webp"
+    ],
+    "precio": 13990,
+    "destacado": false,
+    "portada": false,
+    "categorias": [
+      "otros"
+    ]
   }
 ];
 
@@ -219,6 +233,25 @@ const KITS = [
       },
       {
         "id": "DO-PEN-001",
+        "cantidad": 1
+      }
+    ]
+  },
+  {
+    "id": "DO-KIT-003",
+    "nombre": "Kit Escritorio",
+    "detalle": "Combo teclado + mouse Logitech MK120 + mouse pad XL 70x30. Todo el escritorio listo.",
+    "fotos": [],
+    "precio": 35990,
+    "destacado": true,
+    "portada": true,
+    "componentes": [
+      {
+        "id": "DO-COM-002",
+        "cantidad": 1
+      },
+      {
+        "id": "DO-PAD-001",
         "cantidad": 1
       }
     ]
